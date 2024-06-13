@@ -1,0 +1,37 @@
+services:
+  app:
+    container_name: app-sipaling-hackaton-next-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    privileged: true
+    user: root
+    tty: true
+    ports:
+      - 3000:3000 # for app
+      - 5555:5555 # for prisma studio
+    volumes:
+      - ./../app:/app
+    networks:
+      - hackatonnetwork
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: mongo-sipaling-hackaton-next-app
+    image: mongo:5.0
+    tty: true
+    ports:
+      - 27017:27017
+    networks:
+      - hackatonnetwork
+    volumes:
+      - ./volumes/mongo:/data/db
+    command:
+      - sleep
+      - infinity
+
+networks:
+  hackatonnetwork:
+    driver: bridge
