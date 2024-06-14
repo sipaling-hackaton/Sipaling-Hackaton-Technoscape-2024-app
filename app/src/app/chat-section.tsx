@@ -1,9 +1,8 @@
 "use client";
 
-// import {ReactNode, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useFormState} from 'react-dom'
-import {testGemini} from "@/services/gemini";
+import {chatGemini} from "@/services/gemini";
 import {useEffect, useState} from "react";
 import {Textarea} from "@/components/ui/textarea"
 
@@ -50,11 +49,16 @@ const initialFormState: Chat = {
   }
 }
 
+
 const Chat = () => {
   const [text, setText] = useState<string>("")
-  const [state, formAction] = useFormState(testGemini, initialFormState)
+  const [state, formAction] = useFormState(chatGemini, initialFormState)
+
+  const [chatHistory, setChatHistory] = useState<Chat[]>([])
+
   useEffect(() => {
-    console.log(state)
+    setChatHistory([...chatHistory, state])
+    console.log(chatHistory)
   }, [state])
 
   return (
@@ -62,11 +66,24 @@ const Chat = () => {
           className="flex flex-col gap-4"
           action={formAction}
       >
-        <p
-            className="bg-gray-100 p-2 rounded-md text-sm text-gray-800"
-            aria-live="polite">
-          response: {state?.response?.response?.candidates[0]?.content.parts[0]?.text}
-        </p>
+
+        {/*Mapping user history*/}
+        {
+          chatHistory.map((chat: Chat) => (
+              <div
+                  className={"flex flex-col gap-4 bg-gray-100 p-4 rounded-md max-w-md"}
+                  key={chat.message}
+              >
+                <p>
+                  {chat.message}
+                </p>
+                <p>
+                  {chat.response.response.candidates[0].content?.parts[0].text}
+                </p>
+              </div>
+          ))
+        }
+
         <section>
           <label htmlFor="input">Message</label>
           <Textarea

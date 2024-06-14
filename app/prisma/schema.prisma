@@ -15,7 +15,8 @@ datasource db {
 
 model Chat {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
-  message String
+  input   String
+  response String
   sentiment String
   createdAt DateTime @default(now())
 }

@@ -10,7 +10,9 @@
  */
 
 import {GoogleGenerativeAI} from "@google/generative-ai";
+import {Chat, PrismaClient} from "@prisma/client";
 
+const prisma = new PrismaClient();
 
 const apiKey = process.env.GEMINI_API_KEY;
 
@@ -33,7 +35,7 @@ const generationConfig = {
   responseMimeType: "application/json",
 };
 
-async function testGemini(prevState: any, formData: FormData) {
+async function chatGemini(prevState: any, formData: FormData) {
   const parts = [
     {text: "input: hi"},
     {text: "output: hello"},
@@ -51,12 +53,21 @@ async function testGemini(prevState: any, formData: FormData) {
       )
   );
 
+  // try to save the response to the database
+  await prisma.chat.create({
+    data: {
+      input: input,
+      response: sanitizedResponse.toString(),
+      sentiment: "neutral", // TODO: analyze the mood of the user
+    }
+  });
+
   return {
-    message: "test",
+    message: "ok",
     response: sanitizedResponse,
   }
 }
 
 export {
-  testGemini
+  chatGemini
 }
