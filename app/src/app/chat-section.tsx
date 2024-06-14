@@ -1,15 +1,27 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
-import {useFormState} from 'react-dom'
-import {chatGemini} from "@/services/gemini";
-import {useEffect, useState} from "react";
-import {Textarea} from "@/components/ui/textarea"
-import {Input} from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useFormState } from "react-dom";
+import { chatGemini } from "@/services/gemini";
+import { useEffect, useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Image from "next/image";
+import Link from "next/link";
 
 interface Chat {
-  message: string
-  response: Response
+  message: string;
+  response: Response;
+  input: string;
 }
 
 interface Response {
@@ -19,16 +31,14 @@ interface Response {
         content: {
           parts: [
             {
-              text: string
+              text: string;
             }
-          ]
-        }
+          ];
+        };
       }
-    ]
-  }
-
+    ];
+  };
 }
-
 
 const initialFormState: Chat = {
   message: "",
@@ -39,144 +49,160 @@ const initialFormState: Chat = {
           content: {
             parts: [
               {
-                text: ""
-              }
-            ]
-          }
-        }
-      ]
-    }
-
-  }
-}
-
+                text: "",
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+  input: "",
+};
 
 // parser to json from string
 const parseResponse = (response: string) => {
   try {
     // clean the response
-    response = response.replace(/```json/g, "")
-    response = response.replace(/```/g, "")
-    console.log(response)
-    return JSON.parse(response)
+    response = response.replace(/```json/g, "");
+    response = response.replace(/```/g, "");
+    console.log(response);
+    return JSON.parse(response);
   } catch (e) {
-    return response
+    return response;
   }
-}
+};
 
 const Chat = () => {
-  const [text, setText] = useState<string>("")
+  const [text, setText] = useState<string>("");
   // @ts-ignore
-  const [state, formAction] = useFormState(chatGemini, initialFormState)
+  const [state, formAction] = useFormState(chatGemini, initialFormState);
 
-  const [chatHistory, setChatHistory] = useState<Chat[]>([])
+  const [chatHistory, setChatHistory] = useState<Chat[]>([]);
+
+  const [position, setPosition] = useState("Formal");
+
+  useEffect(() => {}, [position]);
 
   useEffect(() => {
     // @ts-ignore
-    setChatHistory([...chatHistory, state])
-    console.log(chatHistory)
-  }, [state])
+    setChatHistory([...chatHistory, state]);
+    console.log(chatHistory);
+  }, [state]);
 
   return (
-      <form
-          className="flex flex-col gap-4"
-          action={formAction}
-      >
-
-        {/*Mapping user history*/}
-        {
-          chatHistory.map((chat: Chat) => {
-            const content = chat.response.response.candidates[0].content?.parts[0].text
-            if (!content)
-            {
-              return
-            }
-            const parsedContent = parseResponse(content)
-            return (
-                (
-                    <div
-                        className={"flex flex-col gap-4 bg-gray-100 p-4 rounded-md max-w-md"}
-                        key={chat.message}
-                    >
-
-                      <ul
-                      className={"flex flex-col gap-4 list-disc"}
-
-                      >
-                      {
-                        parsedContent.questions.map((question: any) => {
-                          return (
-                              <li
-                                  key={question.index}
-                                  className={"flex flex-col gap-4 bg-gray-200 p-4 rounded-md max-w-md"}
-                              >
-                                <p>
-                                  {question.question}
-                                </p>
-                                <p>
-                                  {question.summary}
-                                </p>
-                              </li>
-                          )
-                        }
-                        )
-                      }
-                      </ul>
-
-                      <p
-                      style={{
-                        backgroundColor: parsedContent.sentiment === "NEGATIVE" ? "red" : parsedContent.sentiment === "POSITIVE" ? "green" : "gray"
-                      }}
-                      >
-                        {parsedContent.sentiment}
-                      </p>
-                      <p>
-                        {parsedContent.advice}
-                      </p>
-                    </div>
-                )
-            )
-          })
-        }
-
-        <section>
-          <label htmlFor="input">Message</label>
-          <Textarea
-              id="input"
-              name="input"
-              placeholder="Message"
-              required
-          />
-        </section>
-
-        <section
-        className={"flex gap-4"}
-        >
-          <Input
+    <form
+      className="p-5 flex flex-col items-center relative min-h-screen w-full max-w-[100vw]"
+      action={formAction}>
+      <section className={"flex self-start items-center justify-center gap-4"}>
+        <Input
+          className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
           name={"language"}
           placeholder={"Language"}
           required
           defaultValue={"indonesia"}
-          />
+        />
 
-          <Input
-              name={"style"}
-              placeholder={"Style"}
-              required
-              defaultValue={"formal"}
-          />
-        </section>
-        <section>
-          <Button
-              type={"submit"}
-          >
-            Send
-          </Button>
-        </section>
-      </form>
-  )
-}
+        {/* <Input
+          name={"style"}
+          placeholder={"Style"}
+          required
+          defaultValue={"Formal"}
+        /> */}
+        <select
+          className=" p-2 rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+          name={"style"}
+          required
+          defaultValue={"Formal"}>
+          <option className="text-[black]" value="" disabled selected hidden>
+            Type
+          </option>
+          <option className="text-[black] font-bold" value="Formal">
+            Formal
+          </option>
+          <option className="text-[black] font-bold" value="Semi Formal">
+            Semi Formal
+          </option>
+          <option className="text-[black] font-bold" value="Relax">
+            Relax
+          </option>
+        </select>
 
-export {
-  Chat
-}
+        <Link href={"setting"}>
+          <Image width={70} height={70} alt="setting" src="Group 9.svg" />
+        </Link>
+      </section>
+
+      <div className="flex flex-col gap-4 min-h-[80vh] w-[80vw]">
+        {/*Mapping user history*/}
+        {chatHistory.map((chat: Chat) => {
+          const content =
+            chat.response.response.candidates[0].content?.parts[0].text;
+          if (!content) {
+            return;
+          }
+          const parsedContent = parseResponse(content);
+          return (
+            <div
+              className={"flex flex-col gap-4  rounded-md max-w-[80vw]"}
+              key={chat.message}>
+              <div className="self-end max-w-[50vw] bg-[#d9d9d9] rounded-lg p-5">
+                <div className="flex gap-3 w-[fit-content] justify-center items-center">
+                  {chat.input}
+
+                  {parsedContent.sentiment}
+                  <div
+                    className="rounded-full w-[1rem] h-[1rem] "
+                    style={{
+                      backgroundColor:
+                        parsedContent.sentiment === "NEGATIVE"
+                          ? "red"
+                          : parsedContent.sentiment === "POSITIVE"
+                          ? "green"
+                          : "gray",
+                    }}></div>
+                </div>
+              </div>
+              <div className="w-[100%] bg-[#d9d9d9] rounded-lg p-5">
+                <div>{parsedContent.input}</div>
+                <ul className={"flex flex-col gap-4 list-disc"}>
+                  {parsedContent.questions.map((question: any) => {
+                    return (
+                      <li
+                        key={question.index}
+                        className={
+                          "flex flex-col gap-4 bg-gray-200 p-4 rounded-md max-w-md"
+                        }>
+                        <p>{question.question}</p>
+                        <p>{question.summary}</p>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <p>{parsedContent.advice}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="w-full sticky justify-center flex align-center fixed bottom-0 left-0">
+        <section className="relative h-[60px]">
+          <Textarea id="input" name="input" placeholder="Message" required />
+          <section className="absolute right-5 top-[50%] transform translate-y-[-50%]">
+            <button type={"submit"}>
+              <Image
+                width={30}
+                height={30}
+                src="Group.svg"
+                alt="button"></Image>
+            </button>
+          </section>
+        </section>
+      </div>
+    </form>
+  );
+};
+
+export { Chat };
