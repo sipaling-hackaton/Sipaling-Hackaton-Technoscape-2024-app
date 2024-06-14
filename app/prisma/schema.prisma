@@ -32,6 +32,7 @@ type ChatResponse {
   questions String[]
   advice    String
   sentiment Sentiment @default(NEUTRAL)
+  emotion   String
 }
 
 type Question {
