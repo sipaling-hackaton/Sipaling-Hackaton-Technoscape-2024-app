@@ -18,15 +18,13 @@ async function getData(): Promise<Payment[]> {
   ]
 }
 const AnalyticsPage = async () => {
-  const chat = await getAllChat()
-  const data = await getData()
   return (
       <section
       className={"flex flex-col items-center justify-center min-h-screen py-2"}
       >
         <h1>Analytics Page</h1>
         <div className="container mx-auto py-10">
-          <DataTable columns={columns} data={chat}/>
+          {/*<DataTable columns={columns} data={chat}/>*/}
         </div>
       </section>
   );
