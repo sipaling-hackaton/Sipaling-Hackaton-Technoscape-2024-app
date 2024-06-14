@@ -73,7 +73,7 @@ const parseResponse = (response: string) => {
   }
 };
 
-const Chat = () => {
+const Chat = ({ Customer }: any) => {
   const [text, setText] = useState<string>("");
   // @ts-ignore
   const [state, formAction] = useFormState(chatGemini, initialFormState);
@@ -103,19 +103,18 @@ const Chat = () => {
             src="Group (1).svg"></Image>
         </Link>
         <Input
+          name={"customer"}
+          placeholder={"Name"}
+          required
+          defaultValue={"User"}
+        />
+        <Input
           className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
           name={"language"}
           placeholder={"Language"}
           required
           defaultValue={"indonesia"}
         />
-
-        {/* <Input
-          name={"style"}
-          placeholder={"Style"}
-          required
-          defaultValue={"Formal"}
-        /> */}
         <select
           className=" p-2 rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
           name={"style"}
@@ -196,7 +195,7 @@ const Chat = () => {
         })}
       </div>
 
-      <div className="w-full sticky justify-center flex align-center fixed bottom-0 left-0">
+      <div className="w-full sticky justify-center flex align-center bottom-0 left-0">
         <section className="relative h-[60px]">
           <Textarea id="input" name="input" placeholder="Message" required />
           <section className="absolute right-5 top-[50%] transform translate-y-[-50%]">
