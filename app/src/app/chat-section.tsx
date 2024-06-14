@@ -95,6 +95,13 @@ const Chat = () => {
       className="p-5 flex flex-col items-center relative min-h-screen w-full max-w-[100vw]"
       action={formAction}>
       <section className={"flex self-start items-center justify-center gap-4"}>
+        <Link href="/user-list">
+          <Image
+            width={70}
+            height={70}
+            alt="back-button"
+            src="Group (1).svg"></Image>
+        </Link>
         <Input
           className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
           name={"language"}
@@ -114,9 +121,6 @@ const Chat = () => {
           name={"style"}
           required
           defaultValue={"Formal"}>
-          <option className="text-[black]" value="" disabled selected hidden>
-            Type
-          </option>
           <option className="text-[black] font-bold" value="Formal">
             Formal
           </option>
@@ -146,11 +150,16 @@ const Chat = () => {
             <div
               className={"flex flex-col gap-4  rounded-md max-w-[80vw]"}
               key={chat.message}>
-              <div className="self-end max-w-[50vw] bg-[#d9d9d9] rounded-lg p-5">
-                <div className="flex gap-3 w-[fit-content] justify-center items-center">
-                  {chat.input}
-
-                  {parsedContent.sentiment}
+              <div className="flex justify-between self-end max-w-[50vw] min-w-[30vw] bg-[#d9d9d9] rounded-lg p-5">
+                <p>{chat.input}</p>
+                <div className="self-end flex gap-1">
+                  <p className="text-[0.7rem]">
+                    {parsedContent.sentiment === "NEGATIVE"
+                      ? "Negative"
+                      : parsedContent.sentiment === "POSITIVE"
+                      ? "Positive"
+                      : "Netral"}
+                  </p>
                   <div
                     className="rounded-full w-[1rem] h-[1rem] "
                     style={{
