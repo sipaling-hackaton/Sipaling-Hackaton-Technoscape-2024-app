@@ -49,7 +49,32 @@ interface Question {
 }
 
 
+async function fileToGenerativePart(file: File) {
+  const base64EncodedDataPromise = new Promise(async(resolve) => {
+    const reader = file.stream().getReader();
+    const imageDataU8: number[] = [];
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      // @ts-ignore
+      imageDataU8.push(...value);
+    }
+
+    const base64EncodedData = btoa(String.fromCharCode(...imageDataU8));
+
+    resolve(base64EncodedData);
+  });
+
+  return {
+    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+  } as any;
+}
+
+
+
 async function chatGemini(prevState: any, formData: FormData) {
+  // generate history for train
   const parts = [
     {text: "input: you are not good enough"},
     {text: "output: ```json { \"questions\": [], \"advice\": \"Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.\", \"sentiment\": \"NEGATIVE\" } ```"},
@@ -58,14 +83,26 @@ async function chatGemini(prevState: any, formData: FormData) {
   const input = formData.get("input") as string;
   const language = formData.get("language") as string;
   const style = formData.get("style") as string;
+  const image = formData.get("image") as File;
+
+  if (image) {
+    parts.push(await fileToGenerativePart(image));
+  }
+
+
+  // prompt
   const prompt = input.concat(". \n (" +
-      "user will send chat from other platform" +
-      "chatbot will analyze the sentiment (NEUTRAL, POSITIVE, NEGATIVE), " +
-      " and the chatbot will analyze the chat, " +
+      "user (customer service) will send chat from other platform" +
+      "and chatbot will analyze the sentiment (NEUTRAL, POSITIVE, NEGATIVE), " +
+      "and the chatbot will analyze the chat, " +
       "and return the response based on the schema." +
       "chatbot will only generate response based on the language given in prompt" +
       "advice is the response that can be copied and pasted to the user (you will act as customer service" + "with" + style + "style language)" +
       "questions is the summary of question from given chat (return empty array of none)" +
+      "in case of error, chatbot will return the default response" +
+      "```json" +
+      "{ \"questions\": [], \"advice\": \"Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.\", \"sentiment\": \"NEGATIVE\" }" +
+      "```" +
       "" +
       "[schema]: \n" +
       ":\n" +
@@ -86,7 +123,7 @@ async function chatGemini(prevState: any, formData: FormData) {
       "[language]: " + language + "\n"
   );
 
-  const res = await model.generateContent([prompt]);
+  const res = await model.generateContent([prompt, ...parts]);
   const sanitizedResponse: Response = JSON.parse(
       JSON.stringify(
           res,
