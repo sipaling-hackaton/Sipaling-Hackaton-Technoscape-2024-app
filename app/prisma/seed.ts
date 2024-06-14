@@ -5,21 +5,15 @@ const prisma = new PrismaClient()
 async function main() {
   const chats = [
     {
-      input: 'Hello, how can I help you today?',
-      response: 'I am looking for a new laptop.',
-      sentiment: 'positive',
-      createdAt: new Date()
+      url: 'https://id.wikipedia.org/wiki/Halaman_Utama',
     },
     {
-      message: 'I am looking for a new laptop.',
-      response: 'Sure, what is your budget?',
-      sentiment: 'neutral',
-      createdAt: new Date()
+      url: 'https://id.wikipedia.org/wiki/Josef_Stalin',
     }
   ]
 
   for (const chat of chats) {
-    await prisma.chat.create({
+    await prisma.reference.create({
       // @ts-ignore
       data: chat
     })
