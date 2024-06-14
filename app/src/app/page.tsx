@@ -2,18 +2,13 @@
 
 import {getAllChat} from "@/services/database-query";
 import {Chat} from "./chat-section";
+import { Reference } from "./reference-section";
 
 export default async function Home() {
   // const res: [] = await queryTest()
   // if (!res) return <div>Loading...</div>;
   return (
-      <section
-      className={"flex flex-col items-center justify-center min-h-screen py-2"}
-      >
-
-        <h1>
-          Home
-        </h1>
+      <section>
         {/*{res?.map((chat: Chat) => (*/}
         {/*    <div*/}
         {/*    key={chat.id}*/}
@@ -21,7 +16,7 @@ export default async function Home() {
         {/*      Test*/}
         {/*    </div>*/}
         {/*))}*/}
-        <Chat
+        <Reference
         />
       </section>
   );

@@ -33,34 +33,37 @@ const Reference = () => {
                     </div>
                 </div>
             </div>
-            <div class="flex-none">
-            <div class="flex bg-[#D9D9D9] w-2/5 h-12 m-auto rounded-xl">
-                            <button  
-                            onClick={() => setShowInput(true)}
-                             class="m-auto " type="button">
-                                <Image src="addButton.svg" width={30} height={30}/>
-                            </button>
-                            {showInput && ( 
-                                <div className="flex space-x-2"> 
-                                <input
-                                    type="text"
-                                    value={newLink}
-                                    onChange={(e) => setNewLink(e.target.value)}
-                                    className="border rounded px-2 py-1"
-                                />
-                                <Button onClick={addLink}>Submit</Button>
-                                </div>
-                            )}
-                            <div className="flex space-y-2"> 
-                                {links.map((link, index) => (
-                                <Button key={index} asChild>
-                                    <a href={link} target="_blank" rel="noopener noreferrer" className="block">
-                                    {link}
-                                    </a>
-                                </Button>
-                                ))}
-                            </div>
+            <div class="flex flex-col bg-[#D9D9D9] w-2/5 items-center h-12 m-auto rounded-xl">
+                <button  
+                onClick={() => setShowInput(true)}
+                    class="m-auto " type="button">
+                    <Image src="addButton.svg" width={30} height={30}/>
+                </button>
                 </div>
+                <div>
+                {showInput && ( 
+                    <div class="flex w-2/5 m-auto bg-[#D9D9D9] "> 
+                    <input
+                        
+                        type="text"
+                        value={newLink}
+                        onChange={(e) => setNewLink(e.target.value)}
+                        className="border rounded px-2 py-1 w-full"
+                    />
+                    <Button onClick={addLink}>Submit</Button>
+                    </div>
+                )}
+                </div>
+                <div>  
+                    {links.map((link, index) => (
+                        <div class="pt-9">
+                    <Button class="flex flex-col bg-[#D9D9D9] w-2/5 items-center h-12 m-auto rounded-xl" key={index} asChild>
+                        <a href={link} target="_blank" className="block">
+                        {link}
+                        </a>
+                    </Button>
+          </div>
+                    ))}
                 </div>
         </div>
     );
