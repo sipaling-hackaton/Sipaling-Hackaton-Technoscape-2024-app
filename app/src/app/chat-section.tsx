@@ -109,50 +109,59 @@ const Chat = ({ Customer }: any) => {
 
   return (
     <form
-      className="p-5 flex flex-col items-center relative min-h-screen w-full max-w-[100vw]"
+      className="py-5 flex flex-col items-center relative min-h-screen w-full max-w-[100vw] overflow-x-hidden"
       action={formAction}>
-      <section className={"flex self-start items-center justify-center gap-4"}>
-        <Link href="/user-list">
-          <Image
-            width={70}
-            height={70}
-            alt="back-button"
-            src="Group (1).svg"></Image>
-        </Link>
-        <Input
-          name={"customer"}
-          placeholder={"Name"}
-          required
-          defaultValue={"User"}
-        />
-        <Input
-          className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
-          name={"language"}
-          placeholder={"Language"}
-          required
-          defaultValue={"indonesia"}
-        />
-        <select
-          className=" p-2 rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
-          name={"style"}
-          required
-          defaultValue={"Formal"}>
-          <option className="text-[black] font-bold" value="Formal">
-            Formal
-          </option>
-          <option className="text-[black] font-bold" value="Semi Formal">
-            Semi Formal
-          </option>
-          <option className="text-[black] font-bold" value="Relax">
-            Relax
-          </option>
-        </select>
-        <Link href={"setting"}>
-          <Image width={70} height={70} alt="setting" src="Group 9.svg" />
-        </Link>
-      </section>
+      <div
+        className={
+          "px-5 max-w-[100vw] flex-col md:flex-row  flex self-start items-center justify-center gap-4"
+        }>
+        <div className="w-[90vw] md:w-[50vw] flex justify-between items-center gap-4 ">
+          <Link href="/user-list">
+            <Image
+              width={50}
+              height={50}
+              alt="back-button"
+              src="Group (1).svg"></Image>
+          </Link>
+          <Input
+            className="border border-[#a9117b] border-2"
+            name={"customer"}
+            placeholder={"Name"}
+            required
+            defaultValue={"User"}
+          />
+        </div>
 
-      <div className="mt-5 flex flex-col gap-4 min-h-[80vh] w-[80vw]">
+        <div className="w-[90vw] md:w-[50vw] flex justify-between items-center gap-2">
+          <Input
+            className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+            name={"language"}
+            placeholder={"Language"}
+            required
+            defaultValue={"indonesia"}
+          />
+          <select
+            className=" p-2 rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+            name={"style"}
+            required
+            defaultValue={"Formal"}>
+            <option className="text-[black] font-bold" value="Formal">
+              Formal
+            </option>
+            <option className="text-[black] font-bold" value="Semi Formal">
+              Semi Formal
+            </option>
+            <option className="text-[black] font-bold" value="Relax">
+              Relax
+            </option>
+          </select>
+          <Link href={"setting"}>
+            <Image width={70} height={70} alt="setting" src="Group 9.svg" />
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-col gap-4 min-h-[65vh] md:min-h-[80vh] max-h-[65vh] md:max-h-[80vh] overflow-y-scroll w-[80vw]">
         {/*Mapping user history*/}
         {chatHistory.map((chat: Chat) => {
           const content =
@@ -169,7 +178,7 @@ const Chat = ({ Customer }: any) => {
               <div className="flex justify-between self-end max-w-[50vw] min-w-[30vw] bg-[#d9d9d9] rounded-lg p-5">
                 <p>{chat.input}</p>
                 <div className="self-end flex gap-1">
-                  <p className="text-[0.7rem]">
+                  <p className="text-[0.7rem] max-[80%]">
                     {parsedContent.sentiment === "NEGATIVE"
                       ? "Negative"
                       : parsedContent.sentiment === "POSITIVE"
@@ -230,7 +239,7 @@ const Chat = ({ Customer }: any) => {
         )}
       </div>
 
-      <div className="w-full sticky justify-center flex align-center bottom-0 left-0">
+      <div className="w-full pt-2 sticky justify-center flex align-center bottom-0 left-0">
         <section className="relative h-[60px]">
           <Textarea
             ref={textAreaRef}
