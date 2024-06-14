@@ -8,7 +8,13 @@ export default async function Home() {
   // const res: [] = await queryTest()
   // if (!res) return <div>Loading...</div>;
   return (
-      <section>
+      <section
+      className={"flex flex-col items-center justify-center min-h-screen py-2"}
+      >
+
+      //   <h1>
+      //     Home
+      //   </h1>
         {/*{res?.map((chat: Chat) => (*/}
         {/*    <div*/}
         {/*    key={chat.id}*/}
@@ -16,7 +22,7 @@ export default async function Home() {
         {/*      Test*/}
         {/*    </div>*/}
         {/*))}*/}
-        <Reference
+        <Chat
         />
       </section>
   );
