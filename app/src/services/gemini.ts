@@ -81,7 +81,9 @@ async function chatGemini(prevState: any, formData: FormData) {
 
   const input = formData.get("input") as string;
   const language = formData.get("language") as string;
+  console.log("language", language);
   const style = formData.get("style") as string;
+  console.log("style", style);
   const image = formData.get("image") as File;
 
   if (image) {
@@ -105,15 +107,6 @@ async function chatGemini(prevState: any, formData: FormData) {
         return {}
       });
 
-
-  // const langchain = await axios.post("https://llm-engine-nqhvy3qceq-uc.a.run.app/ask", {
-  //   text: input,
-  // })
-  //     .then((response) => response.data)
-  //     .catch((e) => {
-  //       console.log("error", e);
-  //     })
-  //
   console.log("langchain", langchain);
 
 

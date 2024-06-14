@@ -14,6 +14,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Badge} from "@/components/ui/badge";
 import {convertSentimentToColor} from "@/helpers/color-helpers";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 bouncy.register();
 
@@ -71,7 +72,9 @@ const parseResponse = (response: string) => {
   }
 };
 
-const Chat = ({Customer}: any) => {
+const Chat = ({customer}: {
+  customer?: any;
+}) => {
   const [text, setText] = useState<string>("");
   // @ts-ignore
   const [state, formAction] = useFormState(chatGemini, initialFormState);
@@ -122,32 +125,43 @@ const Chat = ({Customer}: any) => {
               name={"customer"}
               placeholder={"Name"}
               required
-              defaultValue={"User"}
+              defaultValue={customer?.name}
           />
 
-          <Input
-              className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
-              name={"language"}
-              placeholder={"Language"}
-              required
+
+          {/*select language*/}
+          <Select
               defaultValue={"indonesia"}
-          />
+              name={"language"}
+          >
+            <SelectTrigger
+                className="px-[2rem] w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+            >
+              <SelectValue placeholder="indonesia" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="indonesia">Indonesia</SelectItem>
+              <SelectItem value="english">English</SelectItem>
+              <SelectItem value="japan">Japan</SelectItem>
+            </SelectContent>
+          </Select>
 
-          <select
-              className="p-2 rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+
+          <Select
               name={"style"}
-              required
-              defaultValue={"Formal"}>
-            <option className="text-[black] font-bold" value="Formal">
-              Formal
-            </option>
-            <option className="text-[black] font-bold" value="Semi Formal">
-              Semi Formal
-            </option>
-            <option className="text-[black] font-bold" value="Relax">
-              Relax
-            </option>
-          </select>
+              defaultValue={"Formal"}
+          >
+            <SelectTrigger
+                className="px-[2rem] w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+            >
+              <SelectValue placeholder="Formal" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem defaultChecked value="Formal">Formal</SelectItem>
+              <SelectItem value="Semi Formal">Semi Formal</SelectItem>
+              <SelectItem value="Relax">Relax</SelectItem>
+            </SelectContent>
+          </Select>
 
           <Link href={"reference"}>
             <Image
