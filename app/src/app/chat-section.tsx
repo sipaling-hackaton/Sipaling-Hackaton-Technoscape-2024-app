@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { chatGemini } from "@/services/gemini";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
+import { bouncy } from "ldrs";
+
+bouncy.register();
 
 interface Chat {
   message: string;
@@ -66,7 +69,6 @@ const parseResponse = (response: string) => {
     // clean the response
     response = response.replace(/```json/g, "");
     response = response.replace(/```/g, "");
-    console.log(response);
     return JSON.parse(response);
   } catch (e) {
     return response;
@@ -79,16 +81,31 @@ const Chat = ({ Customer }: any) => {
   const [state, formAction] = useFormState(chatGemini, initialFormState);
 
   const [chatHistory, setChatHistory] = useState<Chat[]>([]);
+  const [chatCount, setChatCount] = useState<number>(0);
 
   const [position, setPosition] = useState("Formal");
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {}, [position]);
-
   useEffect(() => {
     // @ts-ignore
     setChatHistory([...chatHistory, state]);
+    setChatCount(chatHistory.length);
     console.log(chatHistory);
+    console.log(state);
   }, [state]);
+
+  useEffect(() => {
+    console.log(chatHistory.length);
+    console.log(chatCount);
+  }, [chatCount]);
+
+  const copyClipboard = (value: string) => {
+    navigator.clipboard.writeText(value);
+
+    // Alert the copied text
+    alert("Copied the text");
+  };
 
   return (
     <form
@@ -130,13 +147,12 @@ const Chat = ({ Customer }: any) => {
             Relax
           </option>
         </select>
-
         <Link href={"setting"}>
           <Image width={70} height={70} alt="setting" src="Group 9.svg" />
         </Link>
       </section>
 
-      <div className="flex flex-col gap-4 min-h-[80vh] w-[80vw]">
+      <div className="mt-5 flex flex-col gap-4 min-h-[80vh] w-[80vw]">
         {/*Mapping user history*/}
         {chatHistory.map((chat: Chat) => {
           const content =
@@ -144,6 +160,7 @@ const Chat = ({ Customer }: any) => {
           if (!content) {
             return;
           }
+
           const parsedContent = parseResponse(content);
           return (
             <div
@@ -171,45 +188,83 @@ const Chat = ({ Customer }: any) => {
                     }}></div>
                 </div>
               </div>
-              <div className="w-[100%] bg-[#d9d9d9] rounded-lg p-5">
-                <div>{parsedContent.input}</div>
-                <ul className={"flex flex-col gap-4 list-disc"}>
-                  {parsedContent.questions.map((question: any) => {
-                    return (
-                      <li
-                        key={question.index}
-                        className={
-                          "flex flex-col gap-4 bg-gray-200 p-4 rounded-md max-w-md"
-                        }>
-                        <p>{question.question}</p>
-                        <p>{question.summary}</p>
-                      </li>
-                    );
-                  })}
-                </ul>
+              <div className="flex justify-between w-[100%] bg-[#d9d9d9] rounded-lg p-5">
+                <div className="w-[80%]">
+                  <div>{parsedContent.input}</div>
+                  <ul className={"flex flex-col gap-4 list-disc"}>
+                    {parsedContent.questions.map((question: any) => {
+                      return (
+                        <li
+                          key={question.index}
+                          className={
+                            "flex flex-col gap-4 bg-gray-200 p-4 rounded-md max-w-md"
+                          }>
+                          <p>{question.question}</p>
+                          <p>{question.summary}</p>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
-                <p>{parsedContent.advice}</p>
+                  <p>{parsedContent.advice}</p>
+                </div>
+                <div
+                  className="flex "
+                  onClick={() => copyClipboard(parsedContent.advice)}>
+                  <p className="self-end text-[0.8rem]">copy</p>
+                  <Image
+                    className="pl-3 self-end"
+                    width={30}
+                    height={30}
+                    src="copy.svg"
+                    alt="button"></Image>
+                </div>
               </div>
             </div>
           );
         })}
+        {chatCount > chatHistory.length && (
+          <div className="ml-[2rem] mt-[1rem]">
+            <l-bouncy size="45" speed="1.75" color="#a9117b"></l-bouncy>
+          </div>
+        )}
       </div>
 
       <div className="w-full sticky justify-center flex align-center bottom-0 left-0">
         <section className="relative h-[60px]">
-          <Textarea id="input" name="input" placeholder="Message" required />
-          <section className="absolute right-5 top-[50%] transform translate-y-[-50%]">
-            <button type={"submit"}>
-              <Image
-                width={30}
-                height={30}
-                src="Group.svg"
-                alt="button"></Image>
-            </button>
-          </section>
+          <Textarea
+            ref={textAreaRef}
+            id="input"
+            name="input"
+            placeholder="Message"
+            required
+            disabled={chatCount > chatHistory.length ? true : false}
+          />
+          <SubmitButton setChatCount={setChatCount} textAreaRef={textAreaRef} />
         </section>
       </div>
     </form>
+  );
+};
+
+const SubmitButton = ({ setChatCount, textAreaRef }: any) => {
+  const status = useFormStatus();
+
+  useEffect(() => {
+    console.log(textAreaRef.current);
+    if (textAreaRef.current && textAreaRef.current.value) {
+      setChatCount((prev: any) => prev + 3);
+      textAreaRef.current.value = "";
+    }
+    console.log(status.pending);
+  }, [status.pending]);
+
+  return (
+    <section className="absolute right-5 top-[50%] transform translate-y-[-50%]">
+      <button type={"submit"} disabled={status.pending}>
+        <Image width={30} height={30} src="Group.svg" alt="button"></Image>
+      </button>
+    </section>
   );
 };
 
