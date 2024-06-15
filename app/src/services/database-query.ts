@@ -5,6 +5,7 @@ export type referenceType = {
   createdAt?: string;
   id?: string;
   url: string;
+  datatype: string;
 };
 
 import {PrismaClient} from "@prisma/client";
@@ -23,6 +24,13 @@ export async function getAllReference() {
 
 export async function createReference(data: referenceType[]) {
   const reference = await prisma.reference.createMany({
+    data: data,
+  });
+  return reference;
+}
+
+export async function createSingleReference(data: referenceType) {
+  const reference = await prisma.reference.create({
     data: data,
   });
   return reference;

@@ -7,7 +7,8 @@ export async function GET(request: NextRequest) {
   try {
     const references = await getAllReference();
     return NextResponse.json(references, { status: 200 });
-  } catch {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({ message: "An error occurred" }, { status: 500 });
   }
 }
@@ -17,7 +18,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const references = await createReference(body);
     return NextResponse.json(references, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({ message: "An error occurred" }, { status: 500 });
   }
 }
