@@ -90,7 +90,11 @@ const Reference = () => {
           return { ...reference, exists: true };
         });
       }
-      setLinks(references);
+
+      if (references.message !== "An error occurred") {
+        setLinks(references);
+      }
+      console.log("Fetched reference", references);
     } catch (error) {
       console.error(error);
     } finally {
@@ -139,28 +143,29 @@ const Reference = () => {
         </p>
       </div>
       <div className="flex flex-col gap-5 mb-5">
-        {links.map((link, index) => {
-          return (
-            <div className="relative" key={`web-ref-${link?.url}-${index}`}>
-              <Input
-                onChange={(e: any) => onChangeInput(e, index)}
-                defaultValue={link?.url}
-                className="font-bold h-[5rem] bg-[#d9d9d9] w-[80vw]"
-                disabled={link.exists}
-                placeholder="Enter the reference website link here"></Input>
-              <DeleteAlert referenceId={index} removeFn={removeLink}>
-                <Image
-                  // onClick={() => removeLink(index)}
-                  className="absolute right-[2rem] top-[50%] translate-y-[-100%] hover:cursor-pointer"
-                  width={30}
-                  height={30}
-                  alt="button-back"
-                  src="cancle.svg"
-                />
-              </DeleteAlert>
-            </div>
-          );
-        })}
+        {links.length > 0 &&
+          links.map((link, index) => {
+            return (
+              <div className="relative" key={`web-ref-${link?.url}-${index}`}>
+                <Input
+                  onChange={(e: any) => onChangeInput(e, index)}
+                  defaultValue={link?.url}
+                  className="font-bold h-[5rem] bg-[#d9d9d9] w-[80vw]"
+                  disabled={link.exists}
+                  placeholder="Enter the reference website link here"></Input>
+                <DeleteAlert referenceId={index} removeFn={removeLink}>
+                  <Image
+                    // onClick={() => removeLink(index)}
+                    className="absolute right-[2rem] top-[50%] translate-y-[-100%] hover:cursor-pointer"
+                    width={30}
+                    height={30}
+                    alt="button-back"
+                    src="cancle.svg"
+                  />
+                </DeleteAlert>
+              </div>
+            );
+          })}
       </div>
 
       <Button

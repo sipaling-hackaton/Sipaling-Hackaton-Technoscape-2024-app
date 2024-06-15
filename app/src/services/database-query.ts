@@ -1,6 +1,7 @@
 "use server";
 
 export type referenceType = {
+  message?: string;
   createdAt?: string;
   id?: string;
   url: string;
