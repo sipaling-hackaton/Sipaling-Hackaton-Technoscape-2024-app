@@ -16,13 +16,8 @@ datasource db {
 model Reference {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   url       String
-  datatype  Datatype
+  datatype  String
   createdAt DateTime @default(now())
-}
-
-enum Datatype {
-  website
-  pdf
 }
 
 model User {

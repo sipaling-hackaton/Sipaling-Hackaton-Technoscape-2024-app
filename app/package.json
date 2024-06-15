@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.11.2",
     "@google/generative-ai": "^0.12.0",
     "@hookform/resolvers": "^3.6.0",
     "@prisma/client": "^5.15.0",
@@ -25,8 +26,8 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "jotai": "^2.8.3",
-    "lottie-react": "^2.4.0",
     "ldrs": "^1.0.2",
+    "lottie-react": "^2.4.0",
     "lucide-react": "^0.394.0",
     "next": "14.2.4",
     "pnpm": "^9.3.0",
