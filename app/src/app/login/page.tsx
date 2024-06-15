@@ -20,6 +20,7 @@ const LoginPage = async () => {
               id="username"
               type="text"
               placeholder="sipalinghackaton@ymail.com"
+              required
             />
           </div>
           <div className="w-72 lg:w-96">
@@ -29,15 +30,18 @@ const LoginPage = async () => {
               id="password"
               type="password"
               placeholder="*************"
+              required
             />
           </div>
           <div className="m-auto w-3/5 flex justify-center lg:justify-start mt-[3rem]">
-            <Button
-              className="w-full bg-gradient-to-r from-[#7a2180] to-[#e40276] cursor-pointer hover:opacity-75 rounded-full px-8 py-2"
-              type={"submit"}
-            >
-              Submit
-            </Button>
+            <Link href="/">
+              <Button
+                className="w-full bg-gradient-to-r from-[#7a2180] to-[#e40276] cursor-pointer hover:opacity-75 rounded-full px-8 py-2"
+                type={"submit"}
+              >
+                Login
+              </Button>
+            </Link>
           </div>
         </div>
         <div className="flex justify-center lg:justify-start pt-8 lg:pt-0">
