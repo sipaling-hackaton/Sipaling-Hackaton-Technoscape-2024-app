@@ -139,17 +139,22 @@ const Chat = ({ customer }: { customer?: any }) => {
         <div className="max-w-[90vw] md:max-w-[50vw] gap-5 flex items-center justify-center">
           {/*select language*/}
           <Select defaultValue="Language: Indonesia" name={"language"}>
-            <SelectTrigger className="w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]">
+            <SelectTrigger className="px-[2rem] md:px-2 lg:px-[2rem] w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]">
               <SelectValue placeholder="Language" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Language: Indonesia">
-                Language: Indonesia
+                <p className="hidden md:block">Language: Indonesia</p>
+                <p className="block md:hidden">Indonesia</p>
               </SelectItem>
               <SelectItem value="Language: English">
-                Language: English
+                <p className="hidden md:block">Language: English</p>
+                <p className="block md:hidden">English</p>
               </SelectItem>
-              <SelectItem value="Language: Japan">Language: Japan</SelectItem>
+              <SelectItem value="Language: Japan">
+                <p className="hidden md:block">Language: Japan</p>
+                <p className="block md:hidden">Japan</p>
+              </SelectItem>
             </SelectContent>
           </Select>
 
@@ -222,7 +227,7 @@ const Chat = ({ customer }: { customer?: any }) => {
                 </div>
               </div>
               {/*Questions*/}
-              {parsedContent.questions && (
+              {parsedContent.questions.length > 0 && (
                 <div className={"relative flex flex-row gap-4 max-w-[80vw]"}>
                   <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" />
