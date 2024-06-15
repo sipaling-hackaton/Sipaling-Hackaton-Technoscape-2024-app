@@ -10,7 +10,6 @@ const AnalyticsPage = async () => {
 
   return (
       <section className={"flex flex-col min-h-screen"}>
-        <Navbar/>
         <div className="container mx-auto py-10 ">
           <DataTable columns={columns} data={customers}/>
         </div>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import {Navbar} from "@/app/navbar";
 
 const initialFormState = {
   name: "",
@@ -64,29 +65,34 @@ export default function AddPage() {
       </div>
 
       <form
-        className={
-          "flex flex-col justify-center items-center gap-4 bg-[#d9d9d9] rounded-lg p-5 w-[60vw] lg:max-w-[30vw]"
-        }
-        action={formAction}>
+          className={
+            "flex flex-col justify-center items-center gap-4 bg-[#d9d9d9] rounded-lg p-5 w-[60vw] lg:max-w-[30vw]"
+          }
+          action={formAction}>
         <h1 className="font-bold bg-clip-text text-transparent bg-gradient-to-r sm:text-2xl md:text-4xl from-[#7A2180] to-[#E40276] font-bold">
           New Customer
         </h1>
         <div className="w-full">
           <label className="font-bold">Name</label>
-          <Input placeholder={"Name"} name={"name"} type={"text"} />
+          <Input placeholder={"Name"} name={"name"} type={"text"}/>
         </div>
         <div className="w-full">
           <label className="font-bold">Email</label>
-          <Input placeholder={"Email"} name={"email"} type={"email"} />
+          <Input placeholder={"Email"} name={"email"} type={"email"}/>
         </div>
         <div className="w-full">
           <label className="font-bold">Phone</label>
-          <Input placeholder={"Phone"} name={"phone"} type={"tel"} />
+          <Input placeholder={"Phone"} name={"phone"} type={"tel"}/>
+        </div>
+
+        <div className="w-full">
+          <label className="font-bold">Address</label>
+          <Input placeholder={"Address"} name={"address"} type={"text"}/>
         </div>
 
         <Button
-          className="mt-4 w-full bg-gradient-to-r from-[#7a2180] to-[#e40276] cursor-pointer hover:opacity-75"
-          type={"submit"}>
+            className="mt-4 w-full bg-gradient-to-r from-[#7a2180] to-[#e40276] cursor-pointer hover:opacity-75"
+            type={"submit"}>
           Submit
         </Button>
       </form>
