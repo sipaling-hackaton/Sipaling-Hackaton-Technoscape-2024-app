@@ -75,11 +75,11 @@ const Landing = ({ sentiment, chat, exp }: ILanding) => {
             />
           </div>
         </div>
-        <div className="text-center h-16 text-white font-bold w-11/12 lg:w-4/5 flex flex-wrap lg:flex-nowrap bg-gradient-to-r from-[#7a2180] to-[#e40276] rounded-md">
+        <div className="mb-10 text-center h-16 text-white font-bold w-11/12 lg:w-4/5 flex flex-wrap lg:flex-nowrap bg-gradient-to-r from-[#7a2180] to-[#e40276] rounded-md">
           <h1 className="pt-4 pl-4 text-xl lg:text-2xl">Analytics</h1>
         </div>
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-56 lg:justify-center px-4 ">
-          <div className="bg-[#F0E2E9] lg:w-[20rem] h-[13rem] flex flex-col justify-center items-center rounded-xl">
+          <div className="p-2 bg-[#F0E2E9] lg:w-[20rem] h-[13rem] flex flex-col justify-center items-center rounded-xl">
             <h1 className="font-bold text-3xl lg:text-4xl bg-gradient-to-r from-[#7a2180] to-[#e40276] inline-block text-transparent bg-clip-text">
               {chat}
             </h1>
@@ -87,7 +87,7 @@ const Landing = ({ sentiment, chat, exp }: ILanding) => {
               Question Answered
             </h2>
           </div>
-          <div className=" bg-[#F0E2E9] w-full lg:w-[20rem] h-[13rem] flex flex-col justify-center items-center rounded-xl">
+          <div className="p-2 bg-[#F0E2E9] w-full lg:w-[20rem] h-[13rem] flex flex-col justify-center items-center rounded-xl">
             <p className="font-bold text-3xl lg:text-4xl bg-gradient-to-r from-[#7a2180] to-[#e40276] inline-block text-transparent bg-clip-text">
               {((chat * 10) / 3600).toFixed(2)}
             </p>
@@ -96,7 +96,7 @@ const Landing = ({ sentiment, chat, exp }: ILanding) => {
             </h2>
           </div>
         </div>
-        <div className="mb-10 lg:w-[20rem] h-[30rem] flex flex-col justify-center items-center rounded-xl pt-[8rem]">
+        <div className="mb-10 w-[90vw]   h-[30rem] flex flex-col justify-center items-center rounded-xl pt-[8rem]">
           <p className="font-bold text-2xl  lg:text-2xl bg-gradient-to-r from-[#7a2180] to-[#e40276] inline-block text-transparent bg-clip-text mt-20">
             Chart
           </p>
