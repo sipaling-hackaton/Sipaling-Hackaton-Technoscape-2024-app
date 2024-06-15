@@ -27,11 +27,11 @@ export default async function Home({
       }>
       <section
         className={
-          "flex flex-row-reverse items-end gap-4 w-full max-w-[50rem]"
+          "flex flex-row-reverse items-end gap-4 w-full max-w-[40rem]"
         }>
         <Button className="bg-[#14ae5c]">Save</Button>
 
-        <Link href={"/"}>
+        <Link href={`/${customer.id}`}>
           <Button className={"bg-gradient-to-r from-[#7a2180] to-[#e40276]"}>
             AI Chat
           </Button>
@@ -39,7 +39,7 @@ export default async function Home({
       </section>
 
       <section
-        className="bg-[#d9d9d9] p-10 justify-center flex flex-col p-[2rem] gap-4 w-full max-w-[40rem] 
+        className="bg-[#d9d9d9] p-10 justify-center flex flex-col gap-4 w-full max-w-[40rem]
          border border-gray-200 rounded-lg shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
         <div>
           <Label className={"text-lg font-bold"} htmlFor={"name"}>

@@ -15,12 +15,17 @@ async function getAllCustomer() {
 }
 
 async function getCustomerById(id: string) {
-  const customer = await prismaClient.customer.findUnique({
-    where: {
-      id: id,
-    },
-  });
-  return customer as any;
+  try {
+    const customer = await prismaClient.customer.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return customer as any;
+  }
+  catch (e: any){
+    return {}
+  }
 }
 
 async function getCustomerByEmail(email: string) {
