@@ -19,13 +19,43 @@ model Reference {
   createdAt DateTime @default(now())
 }
 
-model Chat {
-  id       String       @id @default(auto()) @map("_id") @db.ObjectId
-  input    String
-  response ChatResponse
-
-  language  String
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @default("")
+  email     String   @unique @default("")
+  password  String   @default("")
+  role      String   @default("USER")
+  exp       Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model Customer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  phone     String   @default("")
+  address   String   @default("")
+  createdAt DateTime @default(now())
+  Chat      Chat[]
+}
+
+
+model Fact {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+
+model Chat {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  customer   Customer     @relation(fields: [customerId], references: [id])
+  customerId String       @db.ObjectId
+  input      String
+  response   ChatResponse
+  language   String
+  createdAt  DateTime     @default(now())
 }
 
 type ChatResponse {
