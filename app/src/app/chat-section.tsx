@@ -1,23 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useFormState, useFormStatus } from "react-dom";
-import { chatGemini } from "@/services/gemini";
-import { useEffect, useRef, useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {useFormState, useFormStatus} from "react-dom";
+import {chatGemini} from "@/services/gemini";
+import {useEffect, useRef, useState} from "react";
+import {Textarea} from "@/components/ui/textarea";
+import {Input} from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
-import { bouncy } from "ldrs";
+import {bouncy} from "ldrs";
+import {Button} from "@/components/ui/button";
+import toast from "react-hot-toast";
+import {Skeleton} from "@/components/ui/skeleton";
+import {Badge} from "@/components/ui/badge";
+import {convertSentimentToColor} from "@/helpers/color-helpers";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 bouncy.register();
 
@@ -75,7 +72,9 @@ const parseResponse = (response: string) => {
   }
 };
 
-const Chat = ({ Customer }: any) => {
+const Chat = ({customer}: {
+  customer?: any;
+}) => {
   const [text, setText] = useState<string>("");
   // @ts-ignore
   const [state, formAction] = useFormState(chatGemini, initialFormState);
@@ -86,13 +85,13 @@ const Chat = ({ Customer }: any) => {
   const [position, setPosition] = useState("Formal");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {}, [position]);
+  useEffect(() => {
+  }, [position]);
+
   useEffect(() => {
     // @ts-ignore
     setChatHistory([...chatHistory, state]);
     setChatCount(chatHistory.length);
-    console.log(chatHistory);
-    console.log(state);
   }, [state]);
 
   useEffect(() => {
@@ -102,152 +101,239 @@ const Chat = ({ Customer }: any) => {
 
   const copyClipboard = (value: string) => {
     navigator.clipboard.writeText(value);
-
-    // Alert the copied text
-    alert("Copied the text");
+    toast.success("Copied to clipboard!");
   };
 
+
   return (
-    <form
-      className="p-5 flex flex-col items-center relative min-h-screen w-full max-w-[100vw]"
-      action={formAction}>
-      <section className={"flex self-start items-center justify-center gap-4"}>
-        <Link href="/user-list">
-          <Image
-            width={70}
-            height={70}
-            alt="back-button"
-            src="Group (1).svg"></Image>
-        </Link>
-        <Input
-          name={"customer"}
-          placeholder={"Name"}
-          required
-          defaultValue={"User"}
-        />
-        <Input
-          className="rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
-          name={"language"}
-          placeholder={"Language"}
-          required
-          defaultValue={"indonesia"}
-        />
-        <select
-          className=" p-2 rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
-          name={"style"}
-          required
-          defaultValue={"Formal"}>
-          <option className="text-[black] font-bold" value="Formal">
-            Formal
-          </option>
-          <option className="text-[black] font-bold" value="Semi Formal">
-            Semi Formal
-          </option>
-          <option className="text-[black] font-bold" value="Relax">
-            Relax
-          </option>
-        </select>
-        <Link href={"setting"}>
-          <Image width={70} height={70} alt="setting" src="Group 9.svg" />
-        </Link>
-      </section>
-
-      <div className="mt-5 flex flex-col gap-4 min-h-[80vh] w-[80vw]">
-        {/*Mapping user history*/}
-        {chatHistory.map((chat: Chat) => {
-          const content =
-            chat.response.response.candidates[0].content?.parts[0].text;
-          if (!content) {
-            return;
-          }
-
-          const parsedContent = parseResponse(content);
-          return (
-            <div
-              className={"flex flex-col gap-4  rounded-md max-w-[80vw]"}
-              key={chat.message}>
-              <div className="flex justify-between self-end max-w-[50vw] min-w-[30vw] bg-[#d9d9d9] rounded-lg p-5">
-                <p>{chat.input}</p>
-                <div className="self-end flex gap-1">
-                  <p className="text-[0.7rem]">
-                    {parsedContent.sentiment === "NEGATIVE"
-                      ? "Negative"
-                      : parsedContent.sentiment === "POSITIVE"
-                      ? "Positive"
-                      : "Netral"}
-                  </p>
-                  <div
-                    className="rounded-full w-[1rem] h-[1rem] "
-                    style={{
-                      backgroundColor:
-                        parsedContent.sentiment === "NEGATIVE"
-                          ? "red"
-                          : parsedContent.sentiment === "POSITIVE"
-                          ? "green"
-                          : "gray",
-                    }}></div>
-                </div>
-              </div>
-              <div className="flex justify-between w-[100%] bg-[#d9d9d9] rounded-lg p-5">
-                <div className="w-[80%]">
-                  <div>{parsedContent.input}</div>
-                  <ul className={"flex flex-col gap-4 list-disc"}>
-                    {parsedContent.questions.map((question: any) => {
-                      return (
-                        <li
-                          key={question.index}
-                          className={
-                            "flex flex-col gap-4 bg-gray-200 p-4 rounded-md max-w-md"
-                          }>
-                          <p>{question.question}</p>
-                          <p>{question.summary}</p>
-                        </li>
-                      );
-                    })}
-                  </ul>
-
-                  <p>{parsedContent.advice}</p>
-                </div>
-                <div
-                  className="flex "
-                  onClick={() => copyClipboard(parsedContent.advice)}>
-                  <p className="self-end text-[0.8rem]">copy</p>
-                  <Image
-                    className="pl-3 self-end"
-                    width={30}
-                    height={30}
-                    src="copy.svg"
-                    alt="button"></Image>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-        {chatCount > chatHistory.length && (
-          <div className="ml-[2rem] mt-[1rem]">
-            <l-bouncy size="45" speed="1.75" color="#a9117b"></l-bouncy>
-          </div>
-        )}
-      </div>
-
-      <div className="w-full sticky justify-center flex align-center bottom-0 left-0">
-        <section className="relative h-[60px]">
-          <Textarea
-            ref={textAreaRef}
-            id="input"
-            name="input"
-            placeholder="Message"
-            required
-            disabled={chatCount > chatHistory.length ? true : false}
+      <form
+          className="p-5 flex flex-col items-center relative w-full max-w-[100vw] min-h-[150vh]"
+          action={formAction}>
+        <section className={"flex self-start items-center justify-center gap-4"}>
+          <Link href="/crm">
+            <Image
+                width={70}
+                height={70}
+                alt="back-button"
+                src="Group (1).svg"></Image>
+          </Link>
+          <Input
+              readOnly
+              className={
+                "rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+              }
+              name={"customer"}
+              placeholder={"Name"}
+              required
+              defaultValue={customer?.name}
           />
-          <SubmitButton setChatCount={setChatCount} textAreaRef={textAreaRef} />
+
+
+          {/*select language*/}
+          <Select
+              defaultValue={"indonesia"}
+              name={"language"}
+          >
+            <SelectTrigger
+                className="px-[2rem] w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+            >
+              <SelectValue placeholder="indonesia" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="indonesia">Indonesia</SelectItem>
+              <SelectItem value="english">English</SelectItem>
+              <SelectItem value="japan">Japan</SelectItem>
+            </SelectContent>
+          </Select>
+
+
+          <Select
+              name={"style"}
+              defaultValue={"Formal"}
+          >
+            <SelectTrigger
+                className="px-[2rem] w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
+            >
+              <SelectValue placeholder="Formal" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem defaultChecked value="Formal">Formal</SelectItem>
+              <SelectItem value="Semi Formal">Semi Formal</SelectItem>
+              <SelectItem value="Relax">Relax</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Link href={"reference"}>
+            <Image
+                width={70}
+                height={70}
+                alt="setting"
+                src="Group 9.svg"
+            />
+          </Link>
         </section>
-      </div>
-    </form>
+
+
+        <div className="mt-5 flex flex-col gap-4 min-h-[80vh] w-[80vw]">
+          {/*Mapping user history*/}
+          {
+            chatHistory.map((chat: Chat) => {
+              const content =
+                  chat.response.response.candidates[0].content?.parts[0].text;
+
+              // opening chat
+              if (!content ) {
+
+                if (chatCount > 0) {
+                  return
+                }
+
+                return (
+                    <div
+                        className={"w-full h-[90vh] flex flex-row gap-4 justify-center items-center"}
+                    >
+                      <Image
+                          className={"rounded-full"}
+                          width={50}
+                          height={50}
+                          src="https://github.com/shadcn.png"
+                          alt={"avatar"}
+                          />
+                    </div>
+                )
+              }
+
+              const parsedContent = parseResponse(content);
+
+              // Bubble Chat
+              return (
+                  <div
+                      className={"flex flex-col gap-4  rounded-md max-w-[80vw]"}
+                      key={chat.message}>
+
+                    {/*Bubble chat User*/}
+                    <div
+                        className="flex justify-between self-end max-w-[50vw] min-w-[30vw] bg-[#d9d9d9] rounded-lg p-5">
+                      <p>{chat.input}</p>
+
+                      <div className="self-end flex gap-1">
+
+                        {/*sentiment badge*/}
+                        <div
+                            className="flex justify-center items-center rounded-lg px-2.5 py-1 text-white font-bold text-[0.8rem]"
+                            style={{
+                              backgroundColor: convertSentimentToColor(parsedContent.sentiment),
+                            }}
+                        >
+                          {parsedContent?.sentiment?.toLowerCase()}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bubble chat chatbot */}
+                    <div
+                        className={"flex flex-row gap-4"}
+                    >
+                      <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png"/>
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      <section className="flex justify-between w-[100%] bg-[#d9d9d9] rounded-lg p-5">
+                        <div className="w-[80%] flex flex-col gap-2.5">
+
+                          {/*Questions*/}
+                          <ul className="list-disc list-inside space-y-4">
+                            {parsedContent.questions.map((question: any) => (
+                                <li
+                                    key={question.index}
+                                    className="bg-gray-200 p-4 rounded-md max-w-md shadow-md" // Added shadow
+                                >
+                              <span className="font-semibold">
+                                {question.question}
+                              </span>
+                                  <p className={"italic"}>
+                                    {question.summary}
+                                  </p>
+                                </li>
+                            ))}
+                          </ul>
+
+
+                          <h3
+                              className={"text-[#7a2180] font-bold text-lg"}
+                          >
+                            Advice
+                          </h3>
+                          <p>
+                            {parsedContent.advice}
+                          </p>
+                        </div>
+
+                        <Button
+                            type={"button"}
+                            className="flex gap-2.5 w-fit self-end text-white bg-gradient-to-r from-[#7a2180] to-[#e40276] rounded-lg p-2.5"
+                            onClick={() => copyClipboard(parsedContent.advice)}
+                        >
+                          <span className="text-[0.8rem] font-bold text-white">Copy</span>
+                          <Image
+                              className="invert w-[1rem] h-[1rem]"
+                              width={100}
+                              height={100}
+                              src="copy.svg"
+                              alt="button"
+                          />
+                        </Button>
+                      </section>
+                    </div>
+
+                    {/*copy button*/}
+
+
+                  </div>
+
+              );
+            })}
+
+
+          {/*for loading animation*/}
+          {chatCount > chatHistory.length && (
+              <>
+                {/*skeleton*/}
+                <div className="space-y-2 w-full">
+                  <Skeleton className="h-[2rem] w-full"/>
+                  <Skeleton className="h-[2rem] w-full"/>
+                  <Skeleton className="h-[2rem] w-full"/>
+                </div>
+
+                {/*loading*/}
+                <span className="ml-[2rem] mt-[1rem] flex gap-[2rem]">
+                  <l-bouncy size="45" speed="1.75" color="#a9117b"></l-bouncy>
+                  <span className={"text-[#a9117b]"}>
+                    Generating response...
+                  </span>
+                </span>
+              </>
+          )}
+        </div>
+
+        <div className="w-full fixed bottom-[3rem] justify-center flex align-center left-0 ">
+          <section className="relative h-[60px]">
+            <Textarea
+                ref={textAreaRef}
+                id="input"
+                name="input"
+                placeholder="Message"
+                required
+                disabled={chatCount > chatHistory.length}
+            />
+            <SubmitButton setChatCount={setChatCount} textAreaRef={textAreaRef}/>
+          </section>
+        </div>
+      </form>
   );
 };
 
-const SubmitButton = ({ setChatCount, textAreaRef }: any) => {
+const SubmitButton = ({setChatCount, textAreaRef}: any) => {
   const status = useFormStatus();
 
   useEffect(() => {
@@ -256,16 +342,21 @@ const SubmitButton = ({ setChatCount, textAreaRef }: any) => {
       setChatCount((prev: any) => prev + 3);
       textAreaRef.current.value = "";
     }
-    console.log(status.pending);
   }, [status.pending]);
 
   return (
-    <section className="absolute right-5 top-[50%] transform translate-y-[-50%]">
-      <button type={"submit"} disabled={status.pending}>
-        <Image width={30} height={30} src="Group.svg" alt="button"></Image>
-      </button>
-    </section>
+      <section
+          className="absolute right-5 top-[50%] transform translate-y-[-50%]
+          hover:scale-110 transition-transform duration-300 ease-in-out"
+      >
+        <button
+            type={"submit"}
+            disabled={status.pending}
+        >
+          <Image width={30} height={30} src="Group.svg" alt="button"/>
+        </button>
+      </section>
   );
 };
 
-export { Chat };
+export {Chat};
