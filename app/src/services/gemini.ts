@@ -11,6 +11,8 @@
 import {GoogleGenerativeAI} from "@google/generative-ai";
 import {Chat, PrismaClient} from "@prisma/client";
 import axios from "axios";
+import {parseResponse} from "@/helpers/parsejson-helper";
+import {prismaClient} from "@/services/prisma-client";
 
 const prisma = new PrismaClient();
 
@@ -85,6 +87,7 @@ async function chatGemini(prevState: any, formData: FormData) {
   const style = formData.get("style") as string;
   console.log("style", style);
   const image = formData.get("image") as File;
+  const customer_id = formData.get("customer") as string
 
   if (image) {
     parts.push(await fileToGenerativePart(image));
@@ -154,12 +157,26 @@ async function chatGemini(prevState: any, formData: FormData) {
       )
   );
 
+  const parsed = parseResponse(sanitizedResponse?.response.candidates[0].content.parts[0].text)
+
+  prismaClient.chat.create({
+    data: {
+      input: input,
+      language: "",
+      response: parsed,
+      createdAt: new Date(),
+      // @ts-ignore
+      customer: customer_id
+    }
+  })
+
+
   const data: Chat = {
     input: input,
     // @ts-ignore
     response: sanitizedResponse,
     createdAt: new Date(),
-    language: "en",
+    language: language,
   }
 
   // await prisma.chat.create({

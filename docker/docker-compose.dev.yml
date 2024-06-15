@@ -21,17 +21,35 @@ services:
   mongo:
     container_name: mongo-sipaling-hackaton-next-app
     image: mongo:5.0
+#    image: prismagraphql/mongo-single-replica:5.0.3
+#    build:
+#      context: .
+#      dockerfile: mongo.Dockerfile
     tty: true
     ports:
       - 27017:27017
+    restart: always
+#    environment:
+##      MONGO_INITDB_ROOT_USERNAME: admin
+##      MONGO_INITDB_ROOT_PASSWORD: password
+##      MONGO_INITDB_DATABASE: db
+#      MONGO_REPLICA_HOST: localhost
+#      MONGO_REPLICA_PORT: "27017"
+#      MONGO_COMMAND: "mongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: db
     networks:
       - hackatonnetwork
     volumes:
-      - ./volumes/mongo:/data/db
-    command:
-      - sleep
-      - infinity
-
+      - db-sipaling-hackaton-next-app:/data/db
+    command: >
+      bash -c "mongod --replSet rs0 --bind_ip_all && 
+               until mongo --eval \"rs.initiate()\"; do sleep 5; done"
 networks:
   hackatonnetwork:
     driver: bridge
+
+volumes:
+  db-sipaling-hackaton-next-app: {}
