@@ -8,9 +8,10 @@
  * https://ai.google.dev/gemini-api/docs/get-started/node
  */
 
-import {GoogleGenerativeAI} from "@google/generative-ai";
-import {Chat, PrismaClient} from "@prisma/client";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Chat, PrismaClient } from "@prisma/client";
 import axios from "axios";
+import { addingExp } from "./manipulate-exp";
 
 const prisma = new PrismaClient();
 
@@ -35,19 +36,17 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-
 interface Response {
-  questions: Question[]
-  advice: string
-  sentiment: "NEUTRAL" | "POSITIVE" | "NEGATIVE"
+  questions: Question[];
+  advice: string;
+  sentiment: "NEUTRAL" | "POSITIVE" | "NEGATIVE";
 }
 
 interface Question {
-  index: string
-  question: string
-  summary: string
+  index: string;
+  question: string;
+  summary: string;
 }
-
 
 async function fileToGenerativePart(file: File) {
   const base64EncodedDataPromise = new Promise(async (resolve) => {
@@ -55,7 +54,7 @@ async function fileToGenerativePart(file: File) {
     const imageDataU8: number[] = [];
 
     while (true) {
-      const {done, value} = await reader.read();
+      const { done, value } = await reader.read();
       if (done) break;
       // @ts-ignore
       imageDataU8.push(...value);
@@ -67,16 +66,17 @@ async function fileToGenerativePart(file: File) {
   });
 
   return {
-    inlineData: {data: await base64EncodedDataPromise, mimeType: file.type},
+    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
   } as any;
 }
-
 
 async function chatGemini(prevState: any, formData: FormData) {
   // generate history for train
   const parts = [
-    {text: "input: you are not good enough"},
-    {text: "output: ```json { \"questions\": [], \"advice\": \"Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.\", \"sentiment\": \"NEGATIVE\" } ```"},
+    { text: "input: you are not good enough" },
+    {
+      text: 'output: ```json { "questions": [], "advice": "Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.", "sentiment": "NEGATIVE" } ```',
+    },
   ];
 
   const input = formData.get("input") as string;
@@ -90,34 +90,39 @@ async function chatGemini(prevState: any, formData: FormData) {
     parts.push(await fileToGenerativePart(image));
   }
 
-  const langchain = await fetch("https://llm-engine-nqhvy3qceq-uc.a.run.app/ask", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify({
-          question: input,
-        })
-      }
+  const langchain = await fetch(
+    "https://llm-engine-nqhvy3qceq-uc.a.run.app/ask",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        question: input,
+      }),
+    }
   )
-      .then((response) => response.json())
-      .catch((e) => {
-        console.log("error", e);
-        return {}
-      });
+    .then((response) => response.json())
+    .catch((e) => {
+      console.log("error", e);
+      return {};
+    });
 
   console.log("langchain", langchain);
 
-
   // prompt
-  const prompt = input.concat(". \n (" +
+  const prompt = input.concat(
+    ". \n (" +
       "user (customer service) will send chat from other platform" +
       "and chatbot will analyze the sentiment (NEUTRAL, POSITIVE, NEGATIVE), " +
       "and the chatbot will analyze the chat, " +
       "and return the response based on the schema." +
       "chatbot will only generate response based on the language given in prompt" +
-      "advice is the response that can be copied and pasted to the user (you will act as customer service" + "with" + style + "style language)" +
+      "advice is the response that can be copied and pasted to the user (you will act as customer service" +
+      "with" +
+      style +
+      "style language)" +
       "`questions` is the summary of input in case there is a question like statement (return empty array of none)" +
       "chatbot also have to consider langchain as it primary reference results to improve accuracy in case langchain is exist (if it returns question answer, consider to also return it in `question`)" +
       // "in case of error, chatbot will return the default response" +
@@ -130,7 +135,7 @@ async function chatGemini(prevState: any, formData: FormData) {
       "interface Response {\n" +
       "  questions: Question[]\n" +
       "  advice: string\n" +
-      "  sentiment: \"NEUTRAL\" | \"POSITIVE\" | \"NEGATIVE\"\n" +
+      '  sentiment: "NEUTRAL" | "POSITIVE" | "NEGATIVE"\n' +
       "}\n" +
       "\n" +
       "interface Question {\n" +
@@ -140,19 +145,24 @@ async function chatGemini(prevState: any, formData: FormData) {
       "}" +
       ")" +
       "\n" +
-      "[input]:\n " + input + "\n" +
-      "[language  ]: " + language + "\n" +
-      "[langchain]: " + langchain.results
+      "[input]:\n " +
+      input +
+      "\n" +
+      "[language  ]: " +
+      language +
+      "\n" +
+      "[langchain]: " +
+      langchain.results
   );
 
   const res = await model.generateContent([prompt, ...parts]);
   const sanitizedResponse: Response = JSON.parse(
-      JSON.stringify(
-          res,
-          (key, value) => (
-              typeof value === "function" ? undefined : value)
-      )
+    JSON.stringify(res, (key, value) =>
+      typeof value === "function" ? undefined : value
+    )
   );
+
+  await addingExp();
 
   const data: Chat = {
     input: input,
@@ -160,16 +170,13 @@ async function chatGemini(prevState: any, formData: FormData) {
     response: sanitizedResponse,
     createdAt: new Date(),
     language: "en",
-  }
+  };
 
   // await prisma.chat.create({
   //   data: data
   // });
 
-  return data
-
+  return data;
 }
 
-export {
-  chatGemini
-}
+export { chatGemini };
