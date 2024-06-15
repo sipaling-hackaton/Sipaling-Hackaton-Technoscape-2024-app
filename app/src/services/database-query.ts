@@ -7,7 +7,7 @@ export type referenceType = {
   url: string;
 };
 
-import { PrismaClient } from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -37,4 +37,4 @@ export async function deleteReference(id: string) {
   return reference;
 }
 
-export { getAllChat };
+export {getAllChat};

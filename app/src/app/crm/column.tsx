@@ -79,10 +79,21 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "address",
-    header: "Address",
+    header: ({column}) => {
+      return (
+          <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Address
+            <ArrowUpDown className="ml-2 h-4 w-4"/>
+          </Button>
+      )
+    }
   },
   {
     id: "actions",
+    header: "Action",
     cell: ({row}) => {
       const payment = row.original
 
@@ -113,6 +124,19 @@ export const columns: ColumnDef<Payment>[] = [
                   }}
               >
                 AI Chat
+              </DropdownMenuItem>
+              <DropdownMenuSeparator/>
+              <DropdownMenuItem
+                  className={"text-black rounded-lg hover:opacity-50"}
+                  onClick={(e: any) => {
+                    e.preventDefault()
+                    // prevent propagation
+                    e.stopPropagation()
+
+                    window.location.href = `/crm/${payment.id}`
+                  }}
+              >
+                Open Detail
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
