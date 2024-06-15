@@ -124,9 +124,7 @@ const Chat = ({ customer }: { customer?: any }) => {
           </Link>
           <Input
             readOnly
-            className={
-              "rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]"
-            }
+            className={"z-[-1] text-[black] text-center font-bold "}
             name={"customer"}
             placeholder={"Name"}
             required
@@ -140,14 +138,18 @@ const Chat = ({ customer }: { customer?: any }) => {
 
         <div className="max-w-[90vw] md:max-w-[50vw] gap-5 flex items-center justify-center">
           {/*select language*/}
-          <Select defaultValue={"indonesia"} name={"language"}>
-            <SelectTrigger className="px-[2rem] w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]">
-              <SelectValue placeholder="indonesia" />
+          <Select defaultValue="Language: Indonesia" name={"language"}>
+            <SelectTrigger className="w-[20rem] rounded-full text-[white] text-center font-bold bg-gradient-to-r from-[#7a2180] to-[#e40276]">
+              <SelectValue placeholder="Language" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="indonesia">Indonesia</SelectItem>
-              <SelectItem value="english">English</SelectItem>
-              <SelectItem value="japan">Japan</SelectItem>
+              <SelectItem value="Language: Indonesia">
+                Language: Indonesia
+              </SelectItem>
+              <SelectItem value="Language: English">
+                Language: English
+              </SelectItem>
+              <SelectItem value="Language: Japan">Language: Japan</SelectItem>
             </SelectContent>
           </Select>
 
@@ -171,7 +173,6 @@ const Chat = ({ customer }: { customer?: any }) => {
       </div>
 
       <div className="relative mt-5 flex flex-col gap-4 md:min-h-[75vh] min-h-[75vh] max-w-[80vw] w-[80vw] ">
-
         {/*Mapping user history*/}
         {chatHistory.map((chat: Chat) => {
           const content =
@@ -220,6 +221,34 @@ const Chat = ({ customer }: { customer?: any }) => {
                   </div>
                 </div>
               </div>
+              {/*Questions*/}
+              {parsedContent.questions && (
+                <div className={"relative flex flex-row gap-4 max-w-[80vw]"}>
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+
+                  <section className="flex justify-between w-full bg-[#d9d9d9] rounded-lg p-5">
+                    <div className="w-[80%] flex flex-col gap-2.5">
+                      {/*Questions*/}
+                      <ul className="list-inside space-y-4">
+                        {parsedContent.questions.map((question: any) => (
+                          <li
+                            key={question.index}
+                            className="bg-gray-200 p-4 rounded-md max-w-md shadow-md" // Added shadow
+                          >
+                            <span className="font-semibold">
+                              {question.question}
+                            </span>
+                            <p className={"italic"}>{question.summary}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </section>
+                </div>
+              )}
 
               {/* Bubble chat chatbot */}
               <div className={"relative flex flex-row gap-4 max-w-[80vw]"}>
@@ -227,23 +256,9 @@ const Chat = ({ customer }: { customer?: any }) => {
                   <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
+
                 <section className="flex justify-between w-full bg-[#d9d9d9] rounded-lg p-5">
                   <div className="w-[80%] flex flex-col gap-2.5">
-                    {/*Questions*/}
-                    <ul className="list-inside space-y-4">
-                      {parsedContent.questions.map((question: any) => (
-                        <li
-                          key={question.index}
-                          className="bg-gray-200 p-4 rounded-md max-w-md shadow-md" // Added shadow
-                        >
-                          <span className="font-semibold">
-                            {question.question}
-                          </span>
-                          <p className={"italic"}>{question.summary}</p>
-                        </li>
-                      ))}
-                    </ul>
-
                     <h3 className={"text-[#7a2180] font-bold text-lg"}>
                       Advice
                     </h3>
@@ -267,8 +282,6 @@ const Chat = ({ customer }: { customer?: any }) => {
                   </Button>
                 </section>
               </div>
-
-              {/*copy button*/}
             </div>
           );
         })}
