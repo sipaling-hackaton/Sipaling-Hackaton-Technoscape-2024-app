@@ -91,7 +91,8 @@ const Reference = () => {
         });
       }
 
-      if (references.message !== "An error occurred") {
+      // @ts-ignore
+      if (references?.message !== "An error occurred") {
         setLinks(references);
       }
       console.log("Fetched reference", references);
