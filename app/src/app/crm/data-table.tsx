@@ -52,6 +52,18 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: (row, columnId, value) => {
+      // @ts-ignore
+      const nameMatch = row.getValue("name").toLowerCase().includes(value.toLowerCase());
+      // @ts-ignore
+      const emailMatch = row.getValue("email").toLowerCase().includes(value.toLowerCase());
+      // @ts-ignore
+      const id = row.getValue("id").toLowerCase().includes(value.toLowerCase());
+      // @ts-ignore
+      const phone = row.getValue("phone").toLowerCase().includes(value.toLowerCase());
+
+      return nameMatch || emailMatch || id || phone;
+    },
     state: {
       sorting,
       columnFilters,
@@ -62,32 +74,28 @@ export function DataTable<TData, TValue>({
       <div>
         <div className="flex items-center py-4 justify-between">
           <Input
-              placeholder="Filter emails..."
-              value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                  table.getColumn("email")?.setFilterValue(event.target.value)
-              }
+              placeholder="Filter data..."
+              onChange={(e) => table.setGlobalFilter(e.target.value)}
               className="max-w-sm"
           />
 
           <Link href={"crm/add"}>
-            <Button>
+            <Button className={"bg-gradient-to-r from-[#7a2180] to-[#e40276] cursor-pointer hover:opacity-75"}>
               Add Customer
             </Button>
           </Link>
         </div>
         <div className="rounded-md border">
           <Table>
-            <TableHeader>
+            <TableHeader
+            >
               {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
-
-                      onClick={() => {
-                      }}
                       key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
-                          <TableHead key={header.id}>
+                          <TableHead
+                              key={header.id}>
                             {header.isPlaceholder
                                 ? null
                                 : flexRender(
