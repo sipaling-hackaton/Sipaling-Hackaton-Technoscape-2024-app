@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "jotai": "^2.8.3",
+    "lottie-react": "^2.4.0",
     "ldrs": "^1.0.2",
     "lucide-react": "^0.394.0",
     "next": "14.2.4",
@@ -33,6 +34,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.51.5",
     "react-hot-toast": "^2.4.1",
+    "recharts": "^2.12.7",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
