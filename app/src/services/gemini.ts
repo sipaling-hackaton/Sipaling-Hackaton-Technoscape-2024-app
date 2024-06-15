@@ -123,8 +123,8 @@ async function chatGemini(prevState: any, formData: FormData) {
       "with" +
       style +
       "style language)" +
-      "questions is the summary of question from given chat (return empty array of none)" +
-      "chatbot also have to consider langchain results to improve accuracy" +
+      "`questions` is the summary of input in case there is a question like statement (return empty array of none)" +
+      "chatbot also have to consider langchain as it primary reference results to improve accuracy in case langchain is exist (if it returns question answer, consider to also return it in `question`)" +
       // "in case of error, chatbot will return the default response" +
       // "```json" +
       // "{ \"questions\": [], \"advice\": \"Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.\", \"sentiment\": \"NEGATIVE\" }" +
@@ -145,10 +145,10 @@ async function chatGemini(prevState: any, formData: FormData) {
       "}" +
       ")" +
       "\n" +
-      "input: " +
+      "[input]:\n " +
       input +
       "\n" +
-      "[language]: " +
+      "[language  ]: " +
       language +
       "\n" +
       "[langchain]: " +

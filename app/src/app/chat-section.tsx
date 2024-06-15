@@ -11,7 +11,6 @@ import { bouncy } from "ldrs";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { convertSentimentToColor } from "@/helpers/color-helpers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -171,8 +170,8 @@ const Chat = ({ customer }: { customer?: any }) => {
         </div>
       </div>
 
-      <div className="z-[-1] relative mt-5 flex flex-col gap-4 md:min-h-[75vh] min-h-[75vh] max-w-[80vw] w-[80vw] ">
-        
+      <div className="relative mt-5 flex flex-col gap-4 md:min-h-[75vh] min-h-[75vh] max-w-[80vw] w-[80vw] ">
+
         {/*Mapping user history*/}
         {chatHistory.map((chat: Chat) => {
           const content =
@@ -231,7 +230,7 @@ const Chat = ({ customer }: { customer?: any }) => {
                 <section className="flex justify-between w-full bg-[#d9d9d9] rounded-lg p-5">
                   <div className="w-[80%] flex flex-col gap-2.5">
                     {/*Questions*/}
-                    <ul className="list-disc list-inside space-y-4">
+                    <ul className="list-inside space-y-4">
                       {parsedContent.questions.map((question: any) => (
                         <li
                           key={question.index}
@@ -253,7 +252,7 @@ const Chat = ({ customer }: { customer?: any }) => {
 
                   <Button
                     type={"button"}
-                    className="flex gap-2.5 w-fit self-end text-white bg-gradient-to-r from-[#7a2180] to-[#e40276] rounded-lg p-2.5"
+                    className="flex gap-2.5 w-fit self-end text-white bg-gradient-to-r from-[#7a2180] to-[#e40276] rounded-lg p-2.5 hover:opacity-75"
                     onClick={() => copyClipboard(parsedContent.advice)}>
                     <span className="text-[0.8rem] font-bold text-white">
                       Copy
