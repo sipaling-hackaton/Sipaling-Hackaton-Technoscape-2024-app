@@ -22,8 +22,8 @@ interface ILanding {
 const Landing = ({ sentiment, chat, exp }: ILanding) => {
   console.log("exp", exp);
   return (
-    <TooltipProvider>
-      <div className="flex flex-col items-center min-w-[100vw] max-w-[100vw] overflow-x-hidden">
+    <div className="flex flex-col items-center  max-w-[100vw] overflow-x-hidden">
+      <TooltipProvider>
         <Navbar />
         <div className="min-w-[100vw] flex flex-col lg:flex-row flex-wrap justify-center lg:justify-around items-center lg:items-center mb-24 min-h-[70vh]">
           <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left ">
@@ -102,8 +102,8 @@ const Landing = ({ sentiment, chat, exp }: ILanding) => {
           </p>
           <Example />
         </div>
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </div>
   );
 };
 
