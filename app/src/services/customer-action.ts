@@ -10,7 +10,7 @@ async function getAllCustomer() {
     console.log(allCustomer);
     return allCustomer as [];
   } catch (e) {
-    return error;
+    return [];
   }
 }
 
