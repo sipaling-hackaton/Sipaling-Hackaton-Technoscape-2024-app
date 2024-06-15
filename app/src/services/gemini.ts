@@ -1,5 +1,4 @@
 "use server";
-
 /*
  * Install the Generative AI SDK
  *
@@ -11,6 +10,7 @@
 
 import {GoogleGenerativeAI} from "@google/generative-ai";
 import {Chat, PrismaClient} from "@prisma/client";
+import axios from "axios";
 
 const prisma = new PrismaClient();
 
@@ -50,7 +50,7 @@ interface Question {
 
 
 async function fileToGenerativePart(file: File) {
-  const base64EncodedDataPromise = new Promise(async(resolve) => {
+  const base64EncodedDataPromise = new Promise(async (resolve) => {
     const reader = file.stream().getReader();
     const imageDataU8: number[] = [];
 
@@ -67,10 +67,9 @@ async function fileToGenerativePart(file: File) {
   });
 
   return {
-    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+    inlineData: {data: await base64EncodedDataPromise, mimeType: file.type},
   } as any;
 }
-
 
 
 async function chatGemini(prevState: any, formData: FormData) {
@@ -82,12 +81,33 @@ async function chatGemini(prevState: any, formData: FormData) {
 
   const input = formData.get("input") as string;
   const language = formData.get("language") as string;
+  console.log("language", language);
   const style = formData.get("style") as string;
+  console.log("style", style);
   const image = formData.get("image") as File;
 
   if (image) {
     parts.push(await fileToGenerativePart(image));
   }
+
+  const langchain = await fetch("https://llm-engine-nqhvy3qceq-uc.a.run.app/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({
+          question: input,
+        })
+      }
+  )
+      .then((response) => response.json())
+      .catch((e) => {
+        console.log("error", e);
+        return {}
+      });
+
+  console.log("langchain", langchain);
 
 
   // prompt
@@ -99,10 +119,11 @@ async function chatGemini(prevState: any, formData: FormData) {
       "chatbot will only generate response based on the language given in prompt" +
       "advice is the response that can be copied and pasted to the user (you will act as customer service" + "with" + style + "style language)" +
       "questions is the summary of question from given chat (return empty array of none)" +
-      "in case of error, chatbot will return the default response" +
-      "```json" +
-      "{ \"questions\": [], \"advice\": \"Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.\", \"sentiment\": \"NEGATIVE\" }" +
-      "```" +
+      "chatbot also have to consider langchain results to improve accuracy" +
+      // "in case of error, chatbot will return the default response" +
+      // "```json" +
+      // "{ \"questions\": [], \"advice\": \"Mohon maaf, saya akan segera menindaklanjuti laporan tersebut.\", \"sentiment\": \"NEGATIVE\" }" +
+      // "```" +
       "" +
       "[schema]: \n" +
       ":\n" +
@@ -120,7 +141,8 @@ async function chatGemini(prevState: any, formData: FormData) {
       ")" +
       "\n" +
       "input: " + input + "\n" +
-      "[language]: " + language + "\n"
+      "[language]: " + language + "\n" +
+      "[langchain]: " + langchain.results
   );
 
   const res = await model.generateContent([prompt, ...parts]);
