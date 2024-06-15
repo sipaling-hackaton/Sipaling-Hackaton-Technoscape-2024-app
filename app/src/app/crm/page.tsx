@@ -1,5 +1,6 @@
 "use server";
 
+import { Navbar } from "../navbar";
 import { Payment, columns } from "./column";
 import { DataTable } from "./data-table";
 import { getAllCustomer } from "@/services/customer-action";
@@ -9,6 +10,7 @@ const AnalyticsPage = async () => {
 
   return (
     <section className={"flex flex-col min-h-screen py-2"}>
+      <Navbar />
       <div className="container mx-auto py-10 ">
         <DataTable columns={columns} data={customers} />
       </div>

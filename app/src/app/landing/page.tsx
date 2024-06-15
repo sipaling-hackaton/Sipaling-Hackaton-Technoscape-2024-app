@@ -21,8 +21,7 @@ const Landing = () => {
             <div className="m-auto w-11/12 lg:w-full bg-gray-200 rounded-full h-5 dark:bg-gray-700">
               <div
                 className="bg-[#7A2180] h-5 rounded-full"
-                style={{ width: "50%" }}
-              ></div>
+                style={{ width: "50%" }}></div>
             </div>
           </div>
           <div className="pt-16 lg:pt-36">
@@ -65,3 +64,4 @@ const Landing = () => {
 };
 
 export default Landing;
+export { Landing };
